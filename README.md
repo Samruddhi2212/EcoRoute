@@ -1,6 +1,10 @@
 # 🌿 EcoRoute Optimizer
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://eco-route-optimizer.streamlit.app/)
+
 > **Plan smarter, greener routes — visualize your carbon footprint in real time.**
+
+**Live app:** https://eco-route-optimizer.streamlit.app/
 
 EcoRoute Optimizer is an interactive web app built with [Streamlit](https://streamlit.io) that helps users plan multi-stop routes while minimizing CO₂ emissions. It applies a nearest-neighbor heuristic to order stops efficiently, then maps the route and breaks down the environmental impact by segment and transport mode.
 
