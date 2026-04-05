@@ -33,8 +33,8 @@ Urban transportation accounts for roughly 24% of global CO₂ emissions. Small o
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/<your-username>/EcoRoute-Optimizer.git
-cd EcoRoute-Optimizer
+git clone https://github.com/<your-username>/EcoRoute.git
+cd EcoRoute
 ```
 
 ### 2. Create a virtual environment (recommended)
