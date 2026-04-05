@@ -77,3 +77,75 @@ def eco_score(distance_km, mode="car"):
     emissions = estimate_co2(distance_km, mode)
     score = max(0, 100 - (emissions / baseline) * 100)
     return round(score, 1)
+
+
+# Average speeds (km/h) per transport mode for travel time estimation
+MODE_SPEED_KMH = {
+    "car":   50,
+    "bus":   25,
+    "train": 70,
+    "bike":  15,
+    "walk":   5,
+}
+
+
+def travel_time_minutes(distance_km, mode="car"):
+    """Estimated travel time in minutes for a given distance and mode."""
+    speed = MODE_SPEED_KMH.get(mode, 50)
+    return (distance_km / speed) * 60
+
+
+def build_schedule(route, mode, start_time_minutes, durations_minutes):
+    """
+    Build a schedule for the route.
+
+    route               : list of (name, lat, lon)
+    mode                : transport mode string
+    start_time_minutes  : trip start time as minutes since midnight
+    durations_minutes   : list of int, one per stop (time spent at each location)
+
+    Returns list of dicts:
+      { name, arrive_min, depart_min, travel_min, dist_km }
+    """
+    schedule = []
+    current_time = start_time_minutes
+
+    for i, (name, lat, lon) in enumerate(route):
+        if i == 0:
+            travel = 0.0
+            dist   = 0.0
+        else:
+            prev = route[i - 1]
+            dist   = haversine(prev[1], prev[2], lat, lon)
+            travel = travel_time_minutes(dist, mode)
+
+        arrive = current_time + travel
+        duration = durations_minutes[i] if i < len(durations_minutes) else 0
+        depart = arrive + duration
+        current_time = depart
+
+        schedule.append({
+            "name":       name,
+            "arrive_min": arrive,
+            "depart_min": depart,
+            "travel_min": travel,
+            "dist_km":    dist,
+        })
+
+    return schedule
+
+
+def fmt_time(minutes_since_midnight):
+    """Convert minutes-since-midnight float to HH:MM string."""
+    total = int(minutes_since_midnight) % (24 * 60)
+    h, m = divmod(total, 60)
+    return f"{h:02d}:{m:02d}"
+
+
+def fmt_duration(minutes):
+    """Format a duration in minutes as e.g. '1 h 25 min'."""
+    minutes = int(minutes)
+    if minutes < 60:
+        return f"{minutes} min"
+    h, m = divmod(minutes, 60)
+    return f"{h} h {m} min" if m else f"{h} h"
