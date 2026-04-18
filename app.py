@@ -12,8 +12,8 @@ from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 
 from utils import (
     haversine, estimate_co2_v2, nearest_neighbor_route,
-    route_total_distance, eco_score,
-    build_schedule, fmt_time, fmt_duration, travel_time_minutes,
+    eco_score,
+    build_schedule, fmt_time, fmt_duration,
     multi_mode_comparison, co2_equivalents, co2_savings,
     EMISSION_PROFILES, get_time_of_day_factor,
     get_osrm_route, pareto_frontier, weighted_pareto_score,
@@ -275,6 +275,7 @@ def _co2_color(co2_g):
 def default_stop(address="", duration=30, note=""):
     return {"address": address, "duration": duration, "note": note}
 
+
 if "start"      not in st.session_state: st.session_state.start     = default_stop("Empire State Building, New York, NY", 0)
 if "end"        not in st.session_state: st.session_state.end       = default_stop("Brooklyn Bridge, New York, NY", 0)
 if "waypoints"  not in st.session_state: st.session_state.waypoints = [
@@ -468,9 +469,9 @@ if run:
 
     # ── Context badges ────────────────────────────────────────────────────────
     vp = EMISSION_PROFILES[vehicle_type]
-    road_badge = (f'<span class="badge-road">🛣️ Real road distances</span>'
+    road_badge = ('<span class="badge-road">🛣️ Real road distances</span>'
                   if routing_src == "road"
-                  else f'<span class="badge-warn">📐 Estimated distances (haversine)</span>')
+                  else '<span class="badge-warn">📐 Estimated distances (haversine)</span>')
     badges = [f'<span class="badge-info">{vp["icon"]} {vp["label"]}</span>',
               f'<span class="badge-info">{wx["icon"]} {wx["temp"]:.0f}°C{"  · Rain" if wx["is_raining"] else ""}</span>',
               road_badge]
@@ -663,7 +664,8 @@ if run:
     ]
     for i, (s, note) in enumerate(zip(schedule, notes)):
         lines.append(f"{i+1}. {s['name']}")
-        lines.append(f"   Arrive: {fmt_time(s['arrive_min']) if i>0 else 'Start'}  |  Duration: {fmt_duration(durations[i])}  |  Depart: {fmt_time(s['depart_min'])}")
+        arrive_str = fmt_time(s['arrive_min']) if i > 0 else 'Start'
+        lines.append(f"   Arrive: {arrive_str}  |  Duration: {fmt_duration(durations[i])}  |  Depart: {fmt_time(s['depart_min'])}")
         if note: lines.append(f"   Note: {note}")
         if i < len(schedule)-1:
             lines.append(f"   ↓  {fmt_duration(schedule[i+1]['travel_min'])} ({schedule[i+1]['dist_km']:.2f} km)")

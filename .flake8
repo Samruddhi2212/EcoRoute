@@ -1,0 +1,9 @@
+[flake8]
+max-line-length = 120
+extend-ignore =
+    E221,
+    E272,
+    E701,
+per-file-ignores =
+    # CSS/HTML template strings can't be line-broken without corrupting markup
+    app.py:E501
